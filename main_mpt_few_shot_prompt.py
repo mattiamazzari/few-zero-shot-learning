@@ -11,8 +11,9 @@ def main():
     if ignore_warnings:
         print("All the warnings will be ignored. Switch ignore_warning to False if needed")
         warnings.filterwarnings("ignore")
-    # name = 'mosaicml/mpt-30b-instruct'
-    name = "databricks/dolly-v2-12b"
+        
+    name = 'mosaicml/mpt-30b-instruct'
+    #name = "databricks/dolly-v2-12b"
 
     config = transformers.AutoConfig.from_pretrained(name, trust_remote_code=True)
     #config.max_seq_len = 8192
