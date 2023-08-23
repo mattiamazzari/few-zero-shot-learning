@@ -12,8 +12,8 @@ def main():
         print("All the warnings will be ignored. Switch ignore_warning to False if needed")
         warnings.filterwarnings("ignore")
         
-    #name = 'mosaicml/mpt-30b-instruct'
-    name = "databricks/dolly-v2-12b"
+    name = 'mosaicml/mpt-30b-instruct'
+    #name = "databricks/dolly-v2-12b"
 
     config = transformers.AutoConfig.from_pretrained(name, trust_remote_code=True)
     #config.max_seq_len = 8192
@@ -24,7 +24,6 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(name)  # , padding_side="left")
     
     # quantization_config = BitsAndBytesConfig(llm_int8_enable_fp32_cpu_offload=True)
-    
     # device_map = {
     #     "transformer.word_embeddings": 0,
     #     "transformer.word_embeddings_layernorm": 0,
@@ -49,7 +48,7 @@ def main():
         torch_dtype=torch.bfloat16,  # Load model weights in bfloat16
         trust_remote_code=True,
         load_in_8bit=load_8bit,
-        device_map="auto",
+        device_map="cpu",
     )
 
 
