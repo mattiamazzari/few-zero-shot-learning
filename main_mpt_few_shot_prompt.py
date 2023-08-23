@@ -23,21 +23,15 @@ def main():
     load_8bit = True
     tokenizer = AutoTokenizer.from_pretrained(name)  # , padding_side="left")
     
-    # quantization_config = BitsAndBytesConfig(llm_int8_enable_fp32_cpu_offload=True)
+    quantization_config = BitsAndBytesConfig(llm_int8_enable_fp32_cpu_offload=True)
     
-    # device_map = {
-    #     "transformer.word_embeddings": 0,
-    #     "transformer.word_embeddings_layernorm": 0,
-    #     "lm_head": "cpu",
-    #     "transformer.h": 0,
-    #     "transformer.ln_f": 0,
-    # }
-    
-    # model = transformers.AutoModelForCausalLM.from_pretrained(
-    #     name,
-    #     device_map=device_map,
-    #     quantization_config=quantization_config,
-    # )
+    device_map = {
+        "transformer.word_embeddings": 0,
+        "transformer.word_embeddings_layernorm": 0,
+        "lm_head": "cpu",
+        "transformer.h": 0,
+        "transformer.ln_f": 0,
+    }
     
     model = transformers.AutoModelForCausalLM.from_pretrained(
         name,
@@ -45,8 +39,18 @@ def main():
         torch_dtype=torch.bfloat16,  # Load model weights in bfloat16
         trust_remote_code=True,
         load_in_8bit=load_8bit,
-        device_map="auto",
+        device_map=device_map,
+        quantization_config=quantization_config,
     )
+    
+    # model = transformers.AutoModelForCausalLM.from_pretrained(
+    #     name,
+    #     config=config,
+    #     torch_dtype=torch.bfloat16,  # Load model weights in bfloat16
+    #     trust_remote_code=True,
+    #     load_in_8bit=load_8bit,
+    #     device_map="auto",
+    # )
 
 
 
