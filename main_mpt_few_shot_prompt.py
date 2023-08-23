@@ -12,36 +12,26 @@ def main():
         print("All the warnings will be ignored. Switch ignore_warning to False if needed")
         warnings.filterwarnings("ignore")
         
-    name = 'mosaicml/mpt-30b-instruct'
-    #name = "databricks/dolly-v2-12b"
+    #name = 'mosaicml/mpt-30b-instruct'
+    name = "databricks/dolly-v2-12b"
 
     config = transformers.AutoConfig.from_pretrained(name, trust_remote_code=True)
     #config.max_seq_len = 8192
     #config.attn_config['attn_impl'] = 'triton'  # change this to use triton-based FlashAttention
-    config.init_device = 'cuda:0'  # For fast initialization directly on GPU!
+    #config.init_device = 'cuda:0'  # For fast initialization directly on GPU!
 
     load_8bit = True
     tokenizer = AutoTokenizer.from_pretrained(name)  # , padding_side="left")
     
-    quantization_config = BitsAndBytesConfig(llm_int8_enable_fp32_cpu_offload=True)
+    # quantization_config = BitsAndBytesConfig(llm_int8_enable_fp32_cpu_offload=True)
     
-    device_map = {
-        "transformer.word_embeddings": 0,
-        "transformer.word_embeddings_layernorm": 0,
-        "lm_head": "cpu",
-        "transformer.h": 0,
-        "transformer.ln_f": 0,
-    }
-    
-    model = transformers.AutoModelForCausalLM.from_pretrained(
-        name,
-        config=config,
-        torch_dtype=torch.bfloat16,  # Load model weights in bfloat16
-        trust_remote_code=True,
-        load_in_8bit=load_8bit,
-        device_map=device_map,
-        quantization_config=quantization_config,
-    )
+    # device_map = {
+    #     "transformer.word_embeddings": 0,
+    #     "transformer.word_embeddings_layernorm": 0,
+    #     "lm_head": "cpu",
+    #     "transformer.h": 0,
+    #     "transformer.ln_f": 0,
+    # }
     
     # model = transformers.AutoModelForCausalLM.from_pretrained(
     #     name,
@@ -49,8 +39,18 @@ def main():
     #     torch_dtype=torch.bfloat16,  # Load model weights in bfloat16
     #     trust_remote_code=True,
     #     load_in_8bit=load_8bit,
-    #     device_map="auto",
+    #     device_map=device_map,
+    #     quantization_config=quantization_config,
     # )
+    
+    model = transformers.AutoModelForCausalLM.from_pretrained(
+        name,
+        config=config,
+        torch_dtype=torch.bfloat16,  # Load model weights in bfloat16
+        trust_remote_code=True,
+        load_in_8bit=load_8bit,
+        device_map="auto",
+    )
 
 
 
